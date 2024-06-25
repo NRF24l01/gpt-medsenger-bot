@@ -1,0 +1,12 @@
+PORT = 8034
+HOST = "127.0.0.1"
+APP_KEY = ""
+MAIN_HOST = ""
+
+#Ai ai ai ai ai ai
+AITYPE = 1  # 1 - YaGPT, 2 - ChatGPT
+DIR_ID = ""
+API_KEY = ""
+
+MAX_SESSION_TIME = 60
+MAX_DOCTOR_TIME = 60
