@@ -21,7 +21,7 @@ def ask_yai(json: dict, txt: str) -> str:
     medsenger_api = AgentApiClient(APP_KEY, MAIN_HOST, debug=True)
     if ygpt.is_dop_dop(json["contract_id"]):
         return 1
-    medsenger_api.send_message(json["contract_id"], "Запрос отправлен. Ожидаем ответ.")
+    medsenger_api.send_message(json["contract_id"], "Запрос отправлен. Ожидаем ответ.", forward_to_doctor=False)
 
     ans, callback = ygpt.ask(json["contract_id"], txt)
     print(ans, callback)
@@ -33,6 +33,6 @@ def ask_yai(json: dict, txt: str) -> str:
         text = f"_Новый диалог._\n # Внимание! Ответ создан нейросетью, будьте осторожны, не принимайте всё за чистую монету!!\n{ai_ans}"
     else:
         text = "# Что-то пошло не так."
-    html_ans = markdowner.convert(text)
-    medsenger_api.send_message(json["contract_id"], html_ans)
+    html_ans = markdowner.convert(text).replace('\n', '')
+    medsenger_api.send_message(json["contract_id"], html_ans, forward_to_doctor=False)
     return 1
