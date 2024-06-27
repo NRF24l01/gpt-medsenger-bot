@@ -55,7 +55,7 @@ def ask_cai(json: dict, txt: str) -> str:
 
     ans, callback = cgpt.ask(json["contract_id"], txt)
     print(ans, callback)
-    ai_ans = ans['result']['alternatives'][0]['message']['text']
+    ai_ans = ans["result"]["choices"][0]["message"]["content"]
 
     if callback == "cont":
         text = f"_Продолжение диалога._\n # Внимание! Ответ создан нейросетью, будьте осторожны, не принимайте всё за чистую монету!!\n{ai_ans}"
