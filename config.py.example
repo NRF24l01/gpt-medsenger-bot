@@ -5,8 +5,14 @@ MAIN_HOST = ""
 
 #Ai ai ai ai ai ai
 AITYPE = 1  # 1 - YaGPT, 2 - ChatGPT
+
+# YaGPT
 DIR_ID = ""
 API_KEY = ""
+
+# ChatGPT
+host = ""
+CHATGPT_KEY = ""
 
 MAX_SESSION_TIME = 60
 MAX_DOCTOR_TIME = 60
