@@ -27,12 +27,13 @@ class ChGPT:
 
     def ask_model(self, question):
         self.messages.append({"role": "user", "content": question})
+        print(self.messages)
         payload = {"token": self.token,
                    "model": self.model,
                    "context": self.messages}
         ans = loads(self.send_request(payload))
         print(ans)
-        self.messages.append(ans["result"]["choices"][0]["message"]["content"])
+        self.messages.append(ans["result"]["choices"][0]["message"])
         return ans
 
 

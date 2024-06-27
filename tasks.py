@@ -65,4 +65,5 @@ def ask_cai(json: dict, txt: str) -> str:
         text = "# Что-то пошло не так."
     html_ans = markdowner.convert(text).replace('\n\n', '')
     medsenger_api.send_message(json["contract_id"], html_ans, forward_to_doctor=False)
+    print(html_ans)
     return 1
