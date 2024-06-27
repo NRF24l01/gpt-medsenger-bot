@@ -6,7 +6,7 @@ from yagpt import YaGPT, ManyYGPT
 from celery import Celery, Task
 import time
 from markdown2 import Markdown
-from tasks import ask_yai
+from tasks import ask_yai, ask_cai
 
 app = Flask(__name__)
 medsenger_api = AgentApiClient(APP_KEY, MAIN_HOST, debug=True)
@@ -64,6 +64,8 @@ def save_message():
 
     if AITYPE == 1:
         ask_yai.delay(request.json, request.json["message"]["text"])
+    elif AITYPE == 2:
+        ask_cai.delay(request.json, request.json["message"]["text"])
     return "ok"
 
 

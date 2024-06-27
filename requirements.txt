@@ -4,3 +4,4 @@ medsenger-api
 celery
 redis
 markdown2
+openai
