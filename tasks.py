@@ -43,7 +43,9 @@ def ask_yai(json: dict, txt: str) -> str:
 
 @celery.task
 def ask_cai(json: dict, txt: str) -> str:
+    print("gateway")
     if json["message"]["sender"] == "doctor":
+        print("CLEAR CONTEXT")
         cgpt.clear_context(json["contract_id"])
         cgpt.doc(json["contract_id"])
         return "ok"
@@ -53,7 +55,8 @@ def ask_cai(json: dict, txt: str) -> str:
         return 1
     medsenger_api.send_message(json["contract_id"], "Запрос отправлен. Ожидаем ответ.", forward_to_doctor=False)
 
-    ans, callback = cgpt.ask(json["contract_id"], txt)
+    print("task, contid " + str(json["contract_id"]))
+    ans, callback = cgpt.ask(str(json["contract_id"]), txt)
     print(ans, callback)
     ai_ans = ans["result"]["choices"][0]["message"]["content"]
 
@@ -65,5 +68,10 @@ def ask_cai(json: dict, txt: str) -> str:
         text = "# Что-то пошло не так."
     html_ans = markdowner.convert(text).replace('\n\n', '')
     medsenger_api.send_message(json["contract_id"], html_ans, forward_to_doctor=False)
-    print(html_ans)
+    return 1
+
+@celery.task
+def change_cai(cont_id: int, model: str) -> str:
+    print("change")
+    cgpt.set_model_l(cont_id, model)
     return 1

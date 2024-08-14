@@ -1,15 +1,21 @@
 import json
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, jsonify
 from config import *
 from medsenger_api import *
-from yagpt import YaGPT, ManyYGPT
 from celery import Celery, Task
 import time
 from markdown2 import Markdown
-from tasks import ask_yai, ask_cai
+from tasks import ask_yai, ask_cai, change_cai
+from helper import get_model
 
 app = Flask(__name__)
 medsenger_api = AgentApiClient(APP_KEY, MAIN_HOST, debug=True)
+
+with open("contract_model.json", "r", encoding="utf-8") as f:
+    contract_model = json.loads(f.read())
+
+with open("models.json", "r", encoding="utf-8") as f:
+    models = json.loads(f.read())
 
 
 @app.route('/status', methods=['POST'])
@@ -49,22 +55,50 @@ def remove():
 
 @app.route('/settings', methods=['GET'])
 def settings():
-    return render_template('settings.html')
+    global models, contract_model
+    #print(request.args)
+    contract_model, cmodel = get_model(request.args.get('contract_id'), contract_model, CHATGPT_BASIC)
+    print(cmodel)
+    return render_template('settings.html', models=models, cmodel=cmodel, coid=request.args.get('contract_id'))
+
+
+@app.route("/settings", methods=['POST'])
+def update_model():
+    global models, contract_model
+    get_model(request.form.get("coid"), contract_model, CHATGPT_BASIC)
+    with open("contract_model.json", "r", encoding="utf-8") as f:
+        contract_model = json.loads(f.read())
+
+    contract_model[request.form.get("coid")] = request.form.get("selselsel")
+
+    with open("contract_model.json", "w", encoding="utf-8") as f:
+        f.write(json.dumps(contract_model))
+
+    print(request.form.get("selselsel"))
+    print(request.form.get("coid"))
+
+    change_cai.delay(request.form.get("coid"), models[contract_model[request.form.get("coid")]]["name"])
+
+    return "<script>window.parent.postMessage('close-modal-success','*');</script>"
 
 
 @app.route('/', methods=['GET'])
 def index():
-    return 'waiting for the thunder!'
+    return 'waiting for the Ithunder!'
 
 
 @app.route('/message', methods=['POST'])
 def save_message():
+    global models, contract_model
     print(request.json)
     # medsenger_api.send_message(request.json["contract_id"], "asked")
+    with open("contract_model.json", "r", encoding="utf-8") as f:
+        contract_model = json.loads(f.read())
 
     if AITYPE == 1:
         ask_yai.delay(request.json, request.json["message"]["text"])
     elif AITYPE == 2:
+        change_cai.delay(str(request.form.get("coid")), models[get_model(str(request.json["contract_id"]), contract_model, CHATGPT_BASIC)[1]]["name"])
         ask_cai.delay(request.json, request.json["message"]["text"])
     return "ok"
 

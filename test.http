@@ -1,0 +1,11 @@
+POST 127.0.0.1:5000/message
+Content-Type: application/json
+
+{
+  "message": {
+      "sender": "user",
+      "text": "А это сложна?"
+    },
+  "contract_id": "25565",
+  "token": "UmocnztYEex9STelsKeVlKhJFxldapPaLF8vmQdbicJT4yTrbZ"
+}
