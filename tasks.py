@@ -75,3 +75,9 @@ def change_cai(cont_id: int, model: str) -> str:
     print("change")
     cgpt.set_model_l(cont_id, model)
     return 1
+
+@celery.task
+def change_prompt_cai(cont_id: int, prompt: str) -> str:
+    print("change pr")
+    cgpt.set_promptt(cont_id, prompt)
+    return 1

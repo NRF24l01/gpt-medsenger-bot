@@ -14,11 +14,12 @@ class ChGPT:
 
         if not prompt:
             with open("prompt.txt", "r", encoding="UTF-8") as f:
-                self.set_prompt(f.read())
+                self.prompt = f.read()
 
         self.messages.append({"role": "system", "content": self.prompt})
 
     def set_prompt(self, prompt: str):
+        self.messages[0] = {"role": "system", "content": self.prompt}
         self.prompt = prompt
 
     def set_model(self, model: str):
@@ -54,6 +55,22 @@ class ManyCGPT(ChGPT):
         self.agents[contract_id] = {"start_time": time(), "last_time": time(), "last_doc_time": 0,
                                     "gpt": ChGPT(CHATGPT_KEY, CHATGPT_HOST, CHATGPT_MODEL)}
         print(self.agents)
+
+    def set_promptt(self, contract_id: str, prompt: str):
+        contract_id = str(contract_id)
+        if contract_id not in self.agents.keys():
+            print(contract_id)
+            print(self.agents.keys())
+            print(self.agents)
+            print("contrrrr not in")
+            self.new_agent(contract_id)
+            callback = "new"
+        elif self.agents[contract_id] == 0:
+            print("contrrrr ====== 1")
+            self.new_agent(contract_id)
+            callback = "new"
+
+        self.agents[contract_id].set_prompt(prompt)
 
     def clear_context(self, contract_id):
         contract_id = str(contract_id)

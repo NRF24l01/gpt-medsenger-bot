@@ -6,7 +6,7 @@ from celery import Celery, Task
 import time
 from markdown2 import Markdown
 from tasks import ask_yai, ask_cai, change_cai
-from helper import get_model
+from helper import get_model, get_prompt
 
 app = Flask(__name__)
 medsenger_api = AgentApiClient(APP_KEY, MAIN_HOST, debug=True)
@@ -17,6 +17,11 @@ with open("contract_model.json", "r", encoding="utf-8") as f:
 with open("models.json", "r", encoding="utf-8") as f:
     models = json.loads(f.read())
 
+with open("contract_prompts.json", "r", encoding="utf-8") as f:
+    prompts = json.loads(f.read())
+
+with open("prompt.txt", "r", encoding="utf-8") as f:
+    bprompt = f.read()
 
 @app.route('/status', methods=['POST'])
 def status():
@@ -59,12 +64,12 @@ def settings():
     #print(request.args)
     contract_model, cmodel = get_model(request.args.get('contract_id'), contract_model, CHATGPT_BASIC)
     print(cmodel)
-    return render_template('settings.html', models=models, cmodel=cmodel, coid=request.args.get('contract_id'))
+    return render_template('settings.html', models=models, cmodel=cmodel, coid=request.args.get('contract_id'), prompt=get_prompt(request.args.get('contract_id'), prompts, bprompt)[1])
 
 
 @app.route("/settings", methods=['POST'])
 def update_model():
-    global models, contract_model
+    global models, contract_model, prompts
     get_model(request.form.get("coid"), contract_model, CHATGPT_BASIC)
     with open("contract_model.json", "r", encoding="utf-8") as f:
         contract_model = json.loads(f.read())
@@ -74,9 +79,18 @@ def update_model():
     with open("contract_model.json", "w", encoding="utf-8") as f:
         f.write(json.dumps(contract_model))
 
+    with open("contract_prompts.json", "r", encoding="utf-8") as f:
+        prompts = json.loads(f.read())
+
+    prompts[request.form.get("coid")] = request.form.get("prompt")
+
+    with open("contract_prompts.json", "w", encoding="utf-8") as f:
+        f.write(json.dumps(prompts))
+
     print(request.form.get("selselsel"))
     print(request.form.get("coid"))
 
+    change_prompt_cai.delay(request.form.get("coid"), request.form.get("prompt"))
     change_cai.delay(request.form.get("coid"), models[contract_model[request.form.get("coid")]]["name"])
 
     return "<script>window.parent.postMessage('close-modal-success','*');</script>"

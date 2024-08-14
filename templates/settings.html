@@ -12,6 +12,7 @@
     <strong> Выберите модель: </strong>
     <form class="my-2 d-grid gap-2" method="post">
         <input type="hidden" id="coid" name="coid" value="{{ coid }}">
+
         <select class="form-select" aria-label="Default select example" name="selselsel">
             {% for model in models.keys() %}
             {% if model == cmodel %}
@@ -22,8 +23,19 @@
             {% endfor %}
         </select>
 
+        <small class="--bs-dark" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false"
+               aria-controls="collapseExample"> Продвинутые настройки </small>
+
+        <div class="collapse" id="collapseExample">
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Промпт</label>
+                <textarea class="form-control" name="prompt" id="exampleInputPassword1"> {{prompt}} </textarea>
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Потвердить</button>
     </form>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
