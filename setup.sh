@@ -5,3 +5,4 @@ sudo cp agents_gpt_nginx.conf /etc/nginx/sites-enabled/
 sudo supervisorctl update
 sudo systemctl restart nginx
 sudo certbot --nginx -d gpt.ai.medsenger.ru
+sudo apt-get install libpq-dev

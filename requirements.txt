@@ -5,3 +5,4 @@ celery
 redis
 markdown2
 openai
+psycopg2

@@ -6,19 +6,16 @@ from celery import Celery, Task
 import time
 from markdown2 import Markdown
 from tasks import ask_yai, ask_cai, change_cai, change_prompt_cai
-from helper import get_model, get_prompt
+from manage import app, db
+from models import Model, Prompt
+from helpers import get_or_create
 
-app = Flask(__name__)
 medsenger_api = AgentApiClient(APP_KEY, MAIN_HOST, debug=True)
 
-with open("contract_model.json", "r", encoding="utf-8") as f:
-    contract_model = json.loads(f.read())
+
 
 with open("models.json", "r", encoding="utf-8") as f:
     models = json.loads(f.read())
-
-with open("contract_prompts.json", "r", encoding="utf-8") as f:
-    prompts = json.loads(f.read())
 
 with open("prompt.txt", "r", encoding="utf-8") as f:
     bprompt = f.read()
@@ -62,36 +59,40 @@ def remove():
 def settings():
     global models, contract_model
     #print(request.args)
-    contract_model, cmodel = get_model(request.args.get('contract_id'), contract_model, CHATGPT_BASIC)
+    modelobj = get_or_create(db.session, Model, contract_id=request.args.get('contract_id'))
+
+    promptobj = get_or_create(db.session, Prompt, contract_id=request.args.get('contract_id'))
+
+    cmodel = modelobj.model_name
+    prompt = promptobj.prompt
     print(cmodel)
-    return render_template('settings.html', models=models, cmodel=cmodel, coid=request.args.get('contract_id'), prompt=get_prompt(request.args.get('contract_id'), prompts, bprompt)[1])
+    return render_template('settings.html', models=models, cmodel=cmodel,
+                           coid=request.args.get('contract_id'), prompt=prompt)
 
 
 @app.route("/settings", methods=['POST'])
 def update_model():
-    global models, contract_model, prompts
-    get_model(request.form.get("coid"), contract_model, CHATGPT_BASIC)
-    with open("contract_model.json", "r", encoding="utf-8") as f:
-        contract_model = json.loads(f.read())
+    global models
 
-    contract_model[request.form.get("coid")] = request.form.get("selselsel")
+    # Change model
+    modelobj = get_or_create(db.session, Model, contract_id=request.form.get("coid"))
+    modelobj.model_name = request.form.get("gpt-model")
+    db.session.add(modelobj)
+    db.session.commit()
 
-    with open("contract_model.json", "w", encoding="utf-8") as f:
-        f.write(json.dumps(contract_model))
+    # Change prompt
+    promptobj = get_or_create(db.session, Prompt, contract_id=request.form.get("coid"))
+    promptobj.prompt = request.form.get("prompt")
+    db.session.add(promptobj)
+    db.session.commit()
 
-    with open("contract_prompts.json", "r", encoding="utf-8") as f:
-        prompts = json.loads(f.read())
+    # Get values
+    promptobj = get_or_create(db.session, Prompt, contract_id=request.form.get("coid"))
+    modelobj = get_or_create(db.session, Model, contract_id=request.form.get("coid"))
 
-    prompts[request.form.get("coid")] = request.form.get("prompt")
-
-    with open("contract_prompts.json", "w", encoding="utf-8") as f:
-        f.write(json.dumps(prompts))
-
-    print(request.form.get("selselsel"))
-    print(request.form.get("coid"))
-
-    change_prompt_cai.delay(request.form.get("coid"), request.form.get("prompt"))
-    change_cai.delay(request.form.get("coid"), models[contract_model[request.form.get("coid")]]["name"])
+    # Set values
+    change_prompt_cai.delay(request.form.get("coid"), promptobj.prompt)
+    change_cai.delay(request.form.get("coid"), models[modelobj.model_name]["name"])
 
     return "<script>window.parent.postMessage('close-modal-success','*');</script>"
 
@@ -103,16 +104,23 @@ def index():
 
 @app.route('/message', methods=['POST'])
 def save_message():
-    global models, contract_model
+    global models
     print(request.json)
-    # medsenger_api.send_message(request.json["contract_id"], "asked")
-    with open("contract_model.json", "r", encoding="utf-8") as f:
-        contract_model = json.loads(f.read())
+
+    # Get values
+    promptobj = get_or_create(db.session, Prompt, contract_id=request.json["contract_id"])
+    modelobj = get_or_create(db.session, Model, contract_id=request.json["contract_id"])
+
+    # Set values
+    biba = change_prompt_cai.delay(request.json["contract_id"], promptobj.prompt)
+    boba = change_cai.delay(request.json["contract_id"], models[modelobj.model_name]["name"])
+
+    biba.get()
+    boba.get()
 
     if AITYPE == 1:
         ask_yai.delay(request.json, request.json["message"]["text"])
     elif AITYPE == 2:
-        change_cai.delay(str(request.form.get("coid")), models[get_model(str(request.json["contract_id"]), contract_model, CHATGPT_BASIC)[1]]["name"])
         ask_cai.delay(request.json, request.json["message"]["text"])
     return "ok"
 

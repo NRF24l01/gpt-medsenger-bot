@@ -4,15 +4,25 @@ APP_KEY = ""
 MAIN_HOST = ""
 
 #Ai ai ai ai ai ai
-AITYPE = 1  # 1 - YaGPT, 2 - ChatGPT
+AITYPE = 2  # 1 - YaGPT, 2 - ChatGPT
 
-# YaGPT
+# YAGPT
 DIR_ID = ""
 API_KEY = ""
 
 # ChatGPT
-host = ""
+CHATGPT_MODEL = "gpt-3.5-turbo"
+CHATGPT_BASIC = "GPT-3.5 Turbo"
+CHATGPT_HOST = ""
 CHATGPT_KEY = ""
+
+# Database
+DB_LOGIN = ''
+DB_PASSWORD = ''
+DB_HOST = ''
+DB_PORT = ''
+DB_DATABASE = ''
+
 
 MAX_SESSION_TIME = 60
 MAX_DOCTOR_TIME = 60

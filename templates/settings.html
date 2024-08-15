@@ -13,7 +13,7 @@
     <form class="my-2 d-grid gap-2" method="post">
         <input type="hidden" id="coid" name="coid" value="{{ coid }}">
 
-        <select class="form-select" aria-label="Default select example" name="selselsel">
+        <select class="form-select" aria-label="Default select example" name="gpt-model">
             {% for model in models.keys() %}
             {% if model == cmodel %}
             <option value="{{model}}" selected>{{ model }} ({{ models[model]["desc"] }})</option>
