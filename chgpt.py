@@ -19,8 +19,10 @@ class ChGPT:
         self.messages.append({"role": "system", "content": self.prompt})
 
     def set_prompt(self, prompt: str):
-        self.messages[0] = {"role": "system", "content": self.prompt}
+        print("promt changing")
         self.prompt = prompt
+        self.messages[0] = {"role": "system", "content": self.prompt}
+        print(self.messages)
 
     def set_model(self, model: str):
         self.model = model
@@ -70,7 +72,7 @@ class ManyCGPT(ChGPT):
             self.new_agent(contract_id)
             callback = "new"
 
-        self.agents[contract_id].set_prompt(prompt)
+        self.agents[contract_id]["gpt"].set_prompt(prompt)
 
     def clear_context(self, contract_id):
         contract_id = str(contract_id)

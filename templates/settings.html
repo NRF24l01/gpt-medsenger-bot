@@ -23,15 +23,38 @@
             {% endfor %}
         </select>
 
-        <small class="--bs-dark" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false"
-               aria-controls="collapseExample"> Продвинутые настройки </small>
+        <a data-bs-toggle="collapse" class="text-muted small" data-bs-target="#collapseExample" aria-expanded="false"
+           aria-controls="collapseExample" id="toggle-button"> Продвинутые настройки ↓</a>
 
         <div class="collapse" id="collapseExample">
-            <div class="mb-3">
+            <div class="mb-3 gx-5">
                 <label for="exampleInputPassword1" class="form-label">Промпт</label>
                 <textarea class="form-control" name="prompt" id="exampleInputPassword1"> {{prompt}} </textarea>
             </div>
         </div>
+
+        <script>
+            const toggleButton = document.getElementById('toggle-button');
+            const collapseExample = document.getElementById('collapseExample');
+
+            collapseExample.addEventListener('shown.bs.collapse', () => {
+                toggleButton.textContent = 'Продвинутые настройки ↑';
+            });
+
+            collapseExample.addEventListener('show.bs.collapse', () => {
+                toggleButton.textContent = 'Продвинутые настройки ↓';
+            });
+
+            collapseExample.addEventListener('hide.bs.collapse', () => {
+                toggleButton.textContent = 'Продвинутые настройки ↑';
+            });
+
+
+            collapseExample.addEventListener('hidden.bs.collapse', () => {
+                toggleButton.textContent = 'Продвинутые настройки ↓';
+            });
+        </script>
+
 
         <button type="submit" class="btn btn-primary">Потвердить</button>
     </form>

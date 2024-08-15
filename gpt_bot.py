@@ -5,7 +5,7 @@ from medsenger_api import *
 from celery import Celery, Task
 import time
 from markdown2 import Markdown
-from tasks import ask_yai, ask_cai, change_cai
+from tasks import ask_yai, ask_cai, change_cai, change_prompt_cai
 from helper import get_model, get_prompt
 
 app = Flask(__name__)
