@@ -1,0 +1,25 @@
+services:
+  agents-gpt-dev:
+    container_name: agents-gpt-dev
+    build:
+      context: ../..
+      dockerfile: ./configs/docker/dev.Dockerfile
+    restart: unless-stopped
+    env_file: ../../.env
+    environment:
+      - DB_HOST=127.0.0.1
+      - REDIS_HOST=127.0.0.1
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8034:8034"
+    volumes:
+      - ../../migrations:/app/migrations
+      - ../../requirements.txt:/app/requirements.txt
+      - ../../configs:/app/configs
+    depends_on:
+      - redis
+    network_mode: "host"
+  redis:
+    image: redis:latest
+    network_mode: "host"
+

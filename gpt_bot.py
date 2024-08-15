@@ -4,6 +4,7 @@ from config import *
 from medsenger_api import *
 from celery import Celery, Task
 import time
+from time import sleep
 from markdown2 import Markdown
 from tasks import ask_yai, ask_cai, change_cai, change_prompt_cai
 from manage import app, db
@@ -104,20 +105,21 @@ def index():
 
 @app.route('/message', methods=['POST'])
 def save_message():
-    global models
+    global models, AITYPE
     print(request.json)
-
+    print("Got it")
+    print(AITYPE)
     # Get values
     promptobj = get_or_create(db.session, Prompt, contract_id=request.json["contract_id"])
     modelobj = get_or_create(db.session, Model, contract_id=request.json["contract_id"])
-
+    print(AITYPE)
     # Set values
     biba = change_prompt_cai.delay(request.json["contract_id"], promptobj.prompt)
     boba = change_cai.delay(request.json["contract_id"], models[modelobj.model_name]["name"])
 
-    biba.get()
-    boba.get()
-
+    sleep(0.1)
+    print(AITYPE)
+    AITYPE = int(AITYPE)
     if AITYPE == 1:
         ask_yai.delay(request.json, request.json["message"]["text"])
     elif AITYPE == 2:

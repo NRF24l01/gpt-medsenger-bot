@@ -1,8 +1,10 @@
 Flask
+Flask-SQLAlchemy
+Flask-Migrate
 requests
 medsenger-api
 celery
 redis
 markdown2
-openai
-psycopg2
+psycopg2-binary
+python-dotenv

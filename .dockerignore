@@ -1,7 +1,6 @@
 .venv
 .idea
 __pycache__
-config.py
 chatgpt_test.py
 migrations
 .env
