@@ -1,7 +1,14 @@
 import os
 from dotenv import load_dotenv
+from pprint import pprint
 
 load_dotenv()
+
+# List all files in the /mnt/data directory
+files = os.listdir()
+#print(files)
+# Красивый вывод всех переменных окружения
+#pprint(dict(os.environ))
 
 PORT = int(os.getenv('PORT'))
 HOST = os.getenv('HOST')
