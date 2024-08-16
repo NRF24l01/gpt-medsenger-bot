@@ -17,4 +17,4 @@ COPY ./ ./
 RUN flask db init || true
 
 # Start the Flask application
-ENTRYPOINT ["/bin/sh", "/app/configs/docker/start-dev.sh"]
+# ENTRYPOINT ["/bin/sh", "/app/configs/docker/start-dev.sh"]

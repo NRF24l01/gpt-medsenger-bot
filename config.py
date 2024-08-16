@@ -3,13 +3,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PORT = os.getenv('PORT')
+PORT = int(os.getenv('PORT'))
 HOST = os.getenv('HOST')
 APP_KEY = os.getenv('APP_KEY')
 MAIN_HOST = os.getenv('MAIN_HOST')
 
 # Ai ai ai ai ai ai
-AITYPE = os.getenv('AITYPE')  # 1 - YaGPT, 2 - ChatGPT
+AITYPE = int(os.getenv('AITYPE'))  # 1 - YaGPT, 2 - ChatGPT
 
 # YAGPT
 DIR_ID = os.getenv('DIR_ID')
@@ -25,10 +25,10 @@ CHATGPT_KEY = os.getenv('CHATGPT_KEY')
 DB_LOGIN = os.getenv('DB_LOGIN')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT')
+DB_PORT = int(os.getenv('DB_PORT'))
 DB_DATABASE = os.getenv('DB_DATABASE')
 
 
-MAX_SESSION_TIME = os.getenv('MAX_SESSION_TIME')
-MAX_DOCTOR_TIME = os.getenv("MAX_DOCTOR_TIME")
+MAX_SESSION_TIME = int(os.getenv('MAX_SESSION_TIME'))
+MAX_DOCTOR_TIME = int(os.getenv("MAX_DOCTOR_TIME"))
 REDIS_HOST = os.getenv('REDIS_HOST')
